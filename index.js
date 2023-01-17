@@ -53,7 +53,7 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: ["http://192.168.1.7:3000", "http://localhost:3000"],
+        origin: ["http://192.168.1.7:3000", "http://localhost:3000", "https://058c-2001-ee0-54bc-7970-1542-c6a1-3fd0-1bd6.ap.ngrok.io"],
         Credential: true,
     },
 });
