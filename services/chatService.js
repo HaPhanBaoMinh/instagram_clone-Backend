@@ -10,12 +10,16 @@ const sendMessageService = async ({ sender_id, recipient_id, message }) => {
         let converstation = await conversationSchema.findOne({ sender_id, recipient_id });
 
         if (!converstation) {
-            newConverstation = await conversationSchema({ sender_id, recipient_id });
-            converstation = await newConverstation.save();
+            newConverstation_user1 = await conversationSchema({ sender_id, recipient_id });
+            newConverstation_user2 = await conversationSchema({ sender_id: recipient_id, recipient_id: sender_id });
+            converstation_1 = await newConverstation_user1.save();
+            converstation_2 = await newConverstation_user2.save();
         }
 
         if (!isExistRecipient || !isExistSender) return { status: true, message: "Wrong id!" };
-        const newMessage = chatSchema({ sender_id, recipient_id, message, converstation_id: converstation._id });
+        await conversationSchema.findOneAndUpdate({ sender_id: recipient_id, recipient_id: sender_id }, { newMessage: true });
+
+        const newMessage = chatSchema({ sender_id, recipient_id, message });
         const insert = await newMessage.save();
         return { status: true, insert }
     } catch (error) {
@@ -30,6 +34,9 @@ const getMessageService = async ({ sender_id, recipient_id }) => {
         const isExistRecipient = await userSchema.countDocuments({ _id: recipient_id });
 
         if (!isExistRecipient || !isExistSender) return { status: true, message: "Wrong id!" };
+
+        await conversationSchema.findOneAndUpdate({ sender_id, recipient_id }, { newMessage: false });
+        // console.log({ sender_id, recipient_id });
 
         const message = await chatSchema.find({
             $or: [
@@ -70,9 +77,9 @@ const getChatListService = async ({ sender_id }) => {
                 }
             },
             { "$unwind": '$user' },
-            {
-                "$project": { "user": 1 }
-            }
+            // {
+            //     "$project": { "user": 1 }
+            // }
         ])
         return { status: true, result }
 
@@ -82,4 +89,17 @@ const getChatListService = async ({ sender_id }) => {
     }
 }
 
-module.exports = { sendMessageService, getMessageService, getChatListService }
+const checkIsHaveNewMessageService = async (sender_id) => {
+    try {
+        const result = await conversationSchema.find({ sender_id });
+        return {
+            status: true,
+            result
+        }
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+module.exports = { sendMessageService, getMessageService, getChatListService, checkIsHaveNewMessageService }

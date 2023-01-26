@@ -9,11 +9,13 @@ const postSchema = new Schema({
     },
     total_likes: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0
     },
     total_comments: {
         type: Number,
-        default: 0
+        default: 0,
+        min: 0
     },
     images: {
         type: [Object],

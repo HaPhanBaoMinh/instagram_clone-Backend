@@ -4,7 +4,6 @@ const commentSchema = require("../Models/commentSchema");
 
 const createLikeService = async ({ user_id, post_id }) => {
     try {
-        console.log({ user_id, post_id });
         const newLike = likeSchema({ user_id, post_id });
         const insert = await newLike.save();
         await postSchema.findOneAndUpdate(

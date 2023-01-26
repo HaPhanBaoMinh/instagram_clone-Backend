@@ -1,4 +1,4 @@
-const { sendMessageService, getMessageService, getChatListService } = require("../services/chatService");
+const { sendMessageService, getMessageService, getChatListService, checkIsHaveNewMessageService } = require("../services/chatService");
 
 const sendMessageController = async (req, res) => {
     try {
@@ -33,4 +33,15 @@ const getChatListController = async (req, res) => {
     }
 }
 
-module.exports = { sendMessageController, getMessagesController, getChatListController }
+const checkIsHaveNewMessageController = async (req, res) => {
+    try {
+        const sender_id = await req.params.sender_id;
+        const result = await checkIsHaveNewMessageService(sender_id);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(result.message);
+    }
+}
+
+module.exports = { sendMessageController, getMessagesController, getChatListController, checkIsHaveNewMessageController }

@@ -1,4 +1,4 @@
-const { createPostService } = require("../services/postService");
+const { createPostService, getTrendingPostService, getPostByIdService } = require("../services/postService");
 
 const createPostController = async (req, res) => {
     try {
@@ -13,4 +13,25 @@ const createPostController = async (req, res) => {
     }
 }
 
-module.exports = { createPostController }
+const getTrendingPostController = async (req, res) => {
+    try {
+        const result = await getTrendingPostService();
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.sendStatus(400);
+    }
+}
+
+const getPostByIdController = async (req, res) => {
+    try {
+        const post_id = req.params.post_id;
+        const result = await getPostByIdService(post_id);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.sendStatus(400);
+    }
+}
+
+module.exports = { createPostController, getTrendingPostController, getPostByIdController }

@@ -2,17 +2,21 @@ const { ObjectID } = require("mongodb");
 const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
-const conversationSchema = new Schema({
-    sender_id: {
+const notificationSchema = new Schema({
+    user_id: {
         type: Schema.Types.ObjectId,
     },
-    recipient_id: {
-        type: Schema.Types.ObjectId,
-    },
-    newMessage: {
+    post_id: ObjectID,
+    action_userId: ObjectID,
+    seen: {
         type: Boolean,
-        default: true
+        default: false
+    },
+    type: {
+        type: String,
+        default: "like your post"
     }
+
 }, {
     timestamps: {
         createdAt: 'created_at',
@@ -22,6 +26,6 @@ const conversationSchema = new Schema({
 })
 
 const myDB = mongoose.connection.useDb('Instagram');
-const conversationData = myDB.model("conversation", conversationSchema);
+const notificationData = myDB.model("notification", notificationSchema);
 
-module.exports = conversationData
+module.exports = notificationData

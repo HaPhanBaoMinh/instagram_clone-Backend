@@ -2,6 +2,7 @@ const userSchema = require("../Models/userSchema");
 const userFollowerSchema = require("../Models/user_followers");
 const postSchema = require("../Models/postSchema");
 const { createNewAccressTokenService, createRefreshTokenService } = require("./tokenService");
+const { ObjectId } = require("mongodb");
 
 const createUserService = async ({ name, username, bio, email, phone, gender, password }) => {
     try {
@@ -161,4 +162,49 @@ const checkIsFollowService = async ({ user_id, follower_id }) => {
     }
 }
 
-module.exports = { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService }
+const getFollowingService = async (user_id) => {
+    try {
+        const result = await userFollowerSchema.aggregate([
+            {
+                "$match": {
+                    "user_id": ObjectId(user_id),
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "follower_id",
+                    "pipeline": [
+                        {
+                            "$project": { "name": 1, "username": 1, "avatar": 1 }
+                        }
+                    ],
+                    "foreignField": "_id",
+                    "as": "user"
+                }
+            },
+            { "$unwind": '$user' },
+        ])
+        return {
+            status: true,
+            result
+        }
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+const updateAvatarService = async (user_id, image) => {
+    try {
+        console.log(user_id);
+        console.log(image);
+        const result = await userSchema.findOneAndUpdate({ _id: user_id }, { avatar: image.filename });
+        return { status: true, newAvatar: image.filename };
+    } catch (error) {
+        console.log(error.message);
+        throw error
+    }
+}
+
+module.exports = { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService }

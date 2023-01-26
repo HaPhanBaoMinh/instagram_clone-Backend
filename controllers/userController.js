@@ -1,4 +1,4 @@
-const { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService } = require("../services/userService");
+const { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService } = require("../services/userService");
 
 const createUserController = async (req, res) => {
     try {
@@ -112,5 +112,31 @@ const checkIsFollowController = async (req, res) => {
     }
 }
 
+const getFollowingUserController = async (req, res) => {
+    try {
+        const user_id = await req.params.user_id;
+        const result = await getFollowingService(user_id);
+        //Response
+        // console.log(result);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(result.message);
+    }
+}
 
-module.exports = { createUserController, getUserInforController, followUserController, unFollowUserController, searchUserController, getUserProfileController, checkIsFollowController }
+const updateAvatarController = async (req, res) => {
+    try {
+        const updateAvatarInfo = await req.body;
+        const image = await req.file;
+        // console.log(image);
+        const result = await updateAvatarService(updateAvatarInfo.user_id, image);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(result.message);
+
+    }
+}
+
+module.exports = { updateAvatarController, createUserController, getFollowingUserController, getUserInforController, followUserController, unFollowUserController, searchUserController, getUserProfileController, checkIsFollowController }

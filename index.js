@@ -15,7 +15,10 @@ const feedRouter = require("./routers/feedRouter");
 const chatRouter = require("./routers/chatRouter");
 require("./connection/connection");
 const socket = require("socket.io");
-
+const { likeNotificationService, commentNotificationService } = require("./services/postService");
+const { createNewNotificationService, getNotificationService } = require("./services/notificationService");
+const notificationRouter = require("./routers/notificationRouter");
+const { v4: uuidv4 } = require('uuid');
 
 const app = express()
 const forms = multer();
@@ -42,6 +45,7 @@ app.use('/comment', commentRouter);
 app.use('/like', likeRouter);
 app.use('/feed', feedRouter);
 app.use('/chat', chatRouter);
+app.use('/notification', notificationRouter);
 
 app.use((error, req, res, next) => {
     console.log('This is the rejected field ->', error.field);
@@ -53,7 +57,7 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: ["http://192.168.1.7:3000", "http://localhost:3000", "https://058c-2001-ee0-54bc-7970-1542-c6a1-3fd0-1bd6.ap.ngrok.io"],
+        origin: ["http://192.168.1.8:3000", "http://localhost:3000", "https://058c-2001-ee0-54bc-7970-1542-c6a1-3fd0-1bd6.ap.ngrok.io"],
         Credential: true,
     },
 });
@@ -72,6 +76,28 @@ io.on("connection", (socket) => {
         const recipientSocketId = onlineUser.get(messageInfo.recipient_id);
         if (recipientSocketId) {
             io.to(recipientSocketId).emit("message_recieve", messageInfo);
+        }
+    })
+
+    socket.on("like_post", async likeInfo => {
+        let result = await likeNotificationService(likeInfo.post_id, likeInfo.user_id);
+        console.log(result);
+        const recipientSocketId = onlineUser.get(result.postInfo.user_id.toString());
+        await createNewNotificationService(result.postInfo.user_id.toString(), result.postInfo._id.toString(), result.action_userInfo._id.toString(), 'like your post');
+        if (recipientSocketId) {
+            console.log(recipientSocketId);
+            io.to(recipientSocketId).emit("notification_like", result = { ...result, type: "like your post", _id: uuidv4() });
+        }
+    })
+
+    socket.on("comment_post", async commentInfo => {
+        let result = await commentNotificationService(commentInfo.post_id, commentInfo.user_id);
+        console.log(result);
+        const recipientSocketId = onlineUser.get(result.postInfo.user_id.toString());
+        await createNewNotificationService(result.postInfo.user_id.toString(), result.postInfo._id.toString(), result.action_userInfo._id.toString(), 'comment your post');
+        if (recipientSocketId) {
+            console.log(recipientSocketId);
+            io.to(recipientSocketId).emit("notification_comment", result = { ...result, type: "comment your post", _id: uuidv4() });
         }
     })
 
