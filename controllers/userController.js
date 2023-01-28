@@ -1,4 +1,4 @@
-const { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService } = require("../services/userService");
+const { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService, updateProfileService, changePasswordService, getSuggestionsUserService } = require("../services/userService");
 
 const createUserController = async (req, res) => {
     try {
@@ -86,8 +86,6 @@ const getUserProfileController = async (req, res) => {
     try {
         const username = await req.params.username;
         const result = await getUserProfileService(username);
-        //Response
-        // console.log(result);
         return res.status(200).send(result);
     } catch (error) {
         console.log(error.message);
@@ -116,8 +114,6 @@ const getFollowingUserController = async (req, res) => {
     try {
         const user_id = await req.params.user_id;
         const result = await getFollowingService(user_id);
-        //Response
-        // console.log(result);
         return res.status(200).send(result);
     } catch (error) {
         console.log(error.message);
@@ -129,7 +125,6 @@ const updateAvatarController = async (req, res) => {
     try {
         const updateAvatarInfo = await req.body;
         const image = await req.file;
-        // console.log(image);
         const result = await updateAvatarService(updateAvatarInfo.user_id, image);
         return res.status(200).send(result);
     } catch (error) {
@@ -139,4 +134,37 @@ const updateAvatarController = async (req, res) => {
     }
 }
 
-module.exports = { updateAvatarController, createUserController, getFollowingUserController, getUserInforController, followUserController, unFollowUserController, searchUserController, getUserProfileController, checkIsFollowController }
+const updateProfileController = async (req, res) => {
+    try {
+        const updateProfile = await req.body;
+        const result = await updateProfileService(updateProfile);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(result.message);
+    }
+}
+
+const updatePasswordController = async (req, res) => {
+    try {
+        const updatePass = await req.body
+        const result = await changePasswordService(updatePass);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(result.message);
+    }
+}
+
+const getsuggestionUserController = async (req, res) => {
+    try {
+        const user_id = await req.params.user_id;
+        const result = await getSuggestionsUserService(user_id);
+        return res.status(200).send(result);
+    } catch (error) {
+        console.log(error.message);
+        return res.status(400).send(result.message);
+    }
+}
+
+module.exports = { getsuggestionUserController, updatePasswordController, updateProfileController, updateAvatarController, createUserController, getFollowingUserController, getUserInforController, followUserController, unFollowUserController, searchUserController, getUserProfileController, checkIsFollowController }

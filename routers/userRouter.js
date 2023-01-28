@@ -1,5 +1,5 @@
 const express = require("express");
-const { createUserController, getUserInforController, followUserController, unFollowUserController, searchUserController, getUserProfileController, checkIsFollowController, getFollowingUserController, updateAvatarController } = require("../controllers/userController");
+const { createUserController, getUserInforController, followUserController, unFollowUserController, searchUserController, getUserProfileController, checkIsFollowController, getFollowingUserController, updateAvatarController, updateProfileController, updatePasswordController, getsuggestionUserController } = require("../controllers/userController");
 const { unFollowUserService } = require("../services/userService");
 const upload = require("../config/update");
 
@@ -9,11 +9,14 @@ userRouter.post("/signup", createUserController);
 userRouter.post("/login", getUserInforController);
 userRouter.post("/follow", followUserController);
 userRouter.post("/unfollow", unFollowUserController);
+userRouter.post("/edit", updateProfileController);
+userRouter.post("/password", updatePasswordController);
 userRouter.post("/avatar", upload.single("image"), updateAvatarController);
-userRouter.post("/logout");
+userRouter.get("/suggestion/:user_id", getsuggestionUserController);
 userRouter.get("/following/:user_id", getFollowingUserController);
 userRouter.post("/check-follow", checkIsFollowController);
 userRouter.get("/search", searchUserController);
 userRouter.get("/:username", getUserProfileController);
+userRouter.post("/logout");
 
 module.exports = userRouter 

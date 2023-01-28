@@ -42,7 +42,7 @@ const getTrendingPostService = async () => {
                     total_likes: -1
                 }
             },
-            { "$limit": 5 }
+            { "$limit": 9 }
         ])
         return { status: true, result }
     } catch (error) {

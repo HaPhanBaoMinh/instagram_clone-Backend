@@ -207,4 +207,82 @@ const updateAvatarService = async (user_id, image) => {
     }
 }
 
-module.exports = { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService }
+const updateProfileService = async ({ newName, newUserName, newEmail, newPhone, newBio, _id }) => {
+    try {
+        const isExistEmail = await userSchema.findOne({ email: newEmail, _id: { $ne: _id } });
+        const isExistPhone = await userSchema.findOne({ phone: newPhone, _id: { $ne: _id } });
+        const isExistUserName = await userSchema.findOne({ username: newUserName, _id: { $ne: _id } });
+
+        let result;
+
+        //Check is exist
+        if (isExistEmail) {
+            result = { status: false, message: "Email already in use" }
+            return result;
+        }
+
+        if (isExistPhone) {
+            result = { status: false, message: "Phone already in use" }
+            return result;
+        }
+
+        if (isExistUserName) {
+            result = { status: false, message: "Username already in use" }
+            return result;
+        }
+
+        result = await userSchema.findByIdAndUpdate(_id, { name: newName, username: newUserName, email: newEmail, phone: newPhone, bio: newBio });
+        return { status: true }
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+const changePasswordService = async ({ oldPass, newPass, _id }) => {
+    try {
+        console.log({ oldPass, newPass, _id });
+        const result = await userSchema.findOneAndUpdate({ _id, password: oldPass }, { password: newPass });
+        if (!result) {
+            return { status: false, message: "Incorrect old password!" }
+        }
+        return { status: true, newPassword: newPass }
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+const getSuggestionsUserService = async (user_id) => {
+    try {
+        const result = await userSchema.aggregate([
+            {
+                "$lookup": {
+                    "from": "user_followers",
+                    "localField": "_id",
+                    "foreignField": "follower_id",
+                    "as": "user"
+                }
+            },
+            {
+                "$match": {
+                    "_id": {
+                        "$ne": ObjectId(user_id)
+                    },
+                    "user": []
+                }
+            },
+            { "$limit": 5 }
+            // { "$unwind": '$user' },
+            // {
+            //     "$project": { "user": 1 }
+            // }
+        ])
+        return { status: true, result }
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+module.exports = { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService, updateProfileService, changePasswordService, getSuggestionsUserService }
