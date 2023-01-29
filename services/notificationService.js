@@ -17,7 +17,10 @@ const getNotificationService = async (user_id) => {
         const result = await notificationData.aggregate([
             {
                 "$match": {
-                    "user_id": ObjectId(user_id)
+                    "user_id": ObjectId(user_id),
+                    "action_userId": {
+                        "$ne": ObjectId(user_id)
+                    }
                 }
             },
             {

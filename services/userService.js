@@ -285,4 +285,45 @@ const getSuggestionsUserService = async (user_id) => {
     }
 }
 
-module.exports = { createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService, updateProfileService, changePasswordService, getSuggestionsUserService }
+const getFollowerService = async (user_id) => {
+    console.log(user_id);
+    try {
+        const result = await userFollowerSchema.aggregate([
+            {
+                "$match": {
+                    "$and": [
+                        { "follower_id": ObjectId(user_id), },
+                        {
+                            "user_id": {
+                                "$ne": ObjectId(user_id)
+                            }
+                        }
+                    ]
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "user_id",
+                    "pipeline": [
+                        {
+                            "$project": { "name": 1, "username": 1, "avatar": 1 }
+                        }
+                    ],
+                    "foreignField": "_id",
+                    "as": "user"
+                }
+            },
+            { "$unwind": '$user' },
+        ])
+        return {
+            status: true,
+            result
+        }
+    } catch (error) {
+        console.log(error.message);
+        throw error;
+    }
+}
+
+module.exports = { getFollowerService, createUserService, checkLoginService, followUserService, unFollowUserService, searchUserService, getUserProfileService, checkIsFollowService, getFollowingService, updateAvatarService, updateProfileService, changePasswordService, getSuggestionsUserService }
