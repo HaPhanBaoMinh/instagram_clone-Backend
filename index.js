@@ -57,7 +57,7 @@ const server = app.listen(PORT, () => {
 
 const io = socket(server, {
     cors: {
-        origin: ["http://192.168.1.8:3000", "http://localhost:3000", "https://instagram-clone-frontend.onrender.com"],
+        origin: ["http://192.168.1.8:3000", "http://localhost:3000", "https://instagram-clone-frontend.onrender.com", 'https://instagram-clone-56052.web.app'],
         Credential: true,
     },
 });
