@@ -4,15 +4,14 @@ const userSchema = require("../Models/userSchema");
 const authentication = async (req, res, next) => {
     const token = await req.headers.authorization;
     try {
-        const decoded = verifyAccessToken(token);
-        // console.log(decoded);
+        const decoded = await verifyAccessToken(token);
         if (!decoded) {
             return res.sendStatus(401);
         }
         const userInfo = await userSchema.findOne({ email: decoded.email });
         if (!userInfo) return res.sendStatus(401);
-
         next();
+
     } catch (error) {
         console.log(error.message);
         return res.sendStatus(401);
