@@ -5,7 +5,7 @@ const { authentication } = require("../middleware/authentication");
 
 const postRouter = express.Router();
 
-postRouter.post("/", authentication, upload.array("images", 5), createPostController);
+postRouter.post("/", upload.array("images", 5), createPostController);
 postRouter.get("/trending", authentication, getTrendingPostController);
 postRouter.get("/:post_id", getPostByIdController);
 
