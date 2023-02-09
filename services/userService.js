@@ -55,7 +55,7 @@ const checkLoginService = async ({ payload, password }) => {
         return { status: false, message: "Incorrect userinfo or password" }
     }
     try {
-        result = await userSchema.findOne({ $or: [{ username: payload }, { phone: payload }, { email: payload }] });
+        result = await userSchema.findOne({ $or: [{ username: payload }, { phone: payload }, { email: payload }] }, password);
 
         if (!result) {
             return { status: false, message: "Incorrect user info or password" }
