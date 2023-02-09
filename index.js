@@ -27,10 +27,10 @@ const PORT = process.env.REACT_APP_PORT || 5000;
 
 // Middleware
 app.use(cors());
+app.use(morgan("tiny"));
 app.use(bodyParser.json());
 // app.use(forms.array());
 app.use(bodyParser.urlencoded({ extended: "true" }));
-app.use(morgan("tiny"));
 
 // Router
 app.get('/data', authentication, async (req, res) => {
