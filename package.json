@@ -1,7 +1,7 @@
 {
   "name": "back-end",
   "version": "1.0.0",
-  "description": "",
+  "description": "��#\u0000 \u0000i\u0000n\u0000s\u0000t\u0000a\u0000g\u0000r\u0000a\u0000m\u0000_\u0000c\u0000l\u0000o\u0000n\u0000e\u0000-\u0000B\u0000a\u0000c\u0000k\u0000e\u0000n\u0000d\u0000\r\u0000 \u0000",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js"
@@ -22,5 +22,14 @@
     "multer-gridfs-storage": "^5.0.2",
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.4"
-  }
+  },
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/HaPhanBaoMinh/instagram_clone-Backend.git"
+  },
+  "bugs": {
+    "url": "https://github.com/HaPhanBaoMinh/instagram_clone-Backend/issues"
+  },
+  "homepage": "https://github.com/HaPhanBaoMinh/instagram_clone-Backend#readme"
 }
